@@ -46,6 +46,7 @@ function App() {
 
   const sendToN8N = async (data: any) => {
     try {
+      console.log(data,'data')
       const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -77,7 +78,7 @@ function App() {
     const response = await sendToN8N({
       message: input,
       screenshot,
-      domain: currentDomain
+      // domain: currentDomain
     });
 
     if (response) {

@@ -1,3 +1,5 @@
+import { ImageCapture } from 'image-capture';
+
 export const captureScreen = async () => {
   // Check if we're running in a Chrome extension context
   const isChromeExtension = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
@@ -11,7 +13,7 @@ export const captureScreen = async () => {
       });
     } else {
       // Development fallback using MediaDevices API
-      const stream = await navigator.mediaDevices.getDisplayMedia({ preferCurrentTab: true });
+      const stream = await navigator.mediaDevices.getDisplayMedia({});
       const track = stream.getVideoTracks()[0];
       const imageCapture = new ImageCapture(track);
       const bitmap = await imageCapture.grabFrame();
