@@ -45,53 +45,8 @@ function App() {
     }
   }, []);
   
-  const compressImage = async (base64String: string, quality = 0.7): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        // Scale down images larger than 1200px
-        const maxWidth = 1200;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth) {
-          height = (maxWidth * height) / width;
-          width = maxWidth;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Could not get canvas context'));
-          return;
-        }
-
-        ctx.drawImage(img, 0, 0, width, height);
-        const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
-        resolve(compressedBase64);
-      };
-      img.onerror = reject;
-      img.src = base64String;
-    });
-  };
   const sendToN8N = async (data: any) => {
     try {
-      // If the data includes a screenshot, compress it first
-      if (data.screenshot) {
-        data.screenshot = await compressImage(data.screenshot);
-        
-        // Check final size after compression
-        const payloadSize = JSON.stringify(data).length;
-        const maxPayloadSize = 10 * 1024 * 1024; // 10MB example limit
-        
-        if (payloadSize > maxPayloadSize) {
-          throw new Error(`Payload size (${(payloadSize / 1024 / 1024).toFixed(2)}MB) exceeds maximum allowed size (${maxPayloadSize / 1024 / 1024}MB)`);
-        }
-      }
-  
       const response = await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
